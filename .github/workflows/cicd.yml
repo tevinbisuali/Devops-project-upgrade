@@ -1,0 +1,45 @@
+name: CI-CD Flask App
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          cd app
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Basic syntax check
+        run: |
+          python -m py_compile app/app.py
+          python -m py_compile app/wsgi.py
+
+      - name: Deploy to Azure VM over SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.VM_SSH_KEY }}
+          script: |
+            cd /home/azureuser/YOUR_REPO
+            git pull origin main
+            cd app
+            source venv/bin/activate
+            pip install -r requirements.txt
+            sudo systemctl restart flaskapp
+            sudo systemctl status flaskapp --no-pager
