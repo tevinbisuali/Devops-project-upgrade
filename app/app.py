@@ -120,7 +120,7 @@ HTML_PAGE = """
     <div class="container">
         <section class="hero">
             <div class="badge">Live on Azure</div>
-            <h1>Production-Style Flask DevOps Project by Tevin</h1>
+            <h1>Production-Style Flask DevOps Project by Tevin v1.0</h1>
             <p>
                 This Flask application is deployed on a Linux virtual machine using
                 <span class="highlight">Gunicorn</span>,
